@@ -1,0 +1,2 @@
+# sudoku
+Compile time sudoku
