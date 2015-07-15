@@ -117,7 +117,6 @@ pair<size_t, size_t> next(const Sudoku& s)
 
 Sudoku solve(Sudoku s)
 {
-  return s;
   if (!valid(s)) return s;
   //cout << s << endl;
   try {
