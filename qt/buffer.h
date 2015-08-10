@@ -23,6 +23,7 @@ public:
   void put(const Sudoku& s);
   Sudoku get();
   bool empty() const;
+  void clear();
 
 signals:
   void added(); //  emitted if item added

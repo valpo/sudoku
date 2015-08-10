@@ -50,3 +50,9 @@ bool Buffer::empty() const
   return buffer.isEmpty();
 }
 
+void Buffer::clear()
+{
+  QMutexLocker locker(&lock);
+  buffer.clear();
+}
+

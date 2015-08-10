@@ -50,14 +50,14 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="nextButton">
         <property name="text">
          <string>Next</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="resetButton">
         <property name="text">
          <string>Reset</string>
         </property>

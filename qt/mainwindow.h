@@ -10,16 +10,20 @@
 #include <vector>
 
 class SudokuLabel;
+class Solver;
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
   Q_OBJECT
-  Sudoku sudoku;
+  enum class State { IDLE, SOLVER_PLAYING, SOLVER_PAUSING };
+  State state = State::IDLE;
+  Sudoku sudoku, startGame;
   Buffer buffer;
   QTimer *viewRefresh;
   bool solverRunning;
   std::vector<SudokuLabel*> labelVec; // speed up access to labels
   QElapsedTimer *bencher = 0;
+  Solver *solver = 0;
 public:
   explicit MainWindow(QWidget *parent = 0);
   void showSudoku(const Sudoku& s);
@@ -30,6 +34,8 @@ private slots:
   void refreshView(); // gets item from buffer and displays it
   void on_generateButton_clicked();
   void on_playButton_clicked();
+  void on_resetButton_clicked();
+  void on_nextButton_clicked();
 };
 
 #endif // MAINWINDOW_H

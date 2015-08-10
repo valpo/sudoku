@@ -19,7 +19,7 @@ static unsigned SudokuIn[9][9] = {
 };
 
 MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent), sudoku(9)
+  QMainWindow(parent), sudoku(9), startGame(9)
 {
   setupUi(this);
   initSudoku();
@@ -105,16 +105,72 @@ void MainWindow::refreshView()
 void MainWindow::on_generateButton_clicked()
 {
   qDebug("generate sudoku");
+  viewRefresh->stop();
+  while (solver) {
+    bool res = solver->wait();
+    if (res) {
+      solver->deleteLater();
+      solver = nullptr;
+    }
+  }
+  buffer.clear();
+  state = State::IDLE;
   sudoku.generate();
+  startGame = sudoku;
   showSudoku(sudoku);
   qDebug("generate sudoku finished");
 }
 
 void MainWindow::on_playButton_clicked()
 {
-  Solver *solv = new Solver(&buffer, sudoku, this);
-  connect(solv, SIGNAL(finished()), this, SLOT(solverFinished()));
-  solv->start();
-  solverRunning = true;
-  viewRefresh->start(0);
+  if (state == State::SOLVER_PAUSING or state == State::IDLE) {
+    if (!solver) {
+      startGame = sudoku;
+      solver = new Solver(&buffer, sudoku, this);
+      connect(solver, SIGNAL(finished()), this, SLOT(solverFinished()));
+      solver->start();
+      solverRunning = true;
+    }
+    viewRefresh->start(0);
+    playButton->setText("Stop");
+    state = State::SOLVER_PLAYING;
+  }
+  else if (state == State::SOLVER_PLAYING) {
+    viewRefresh->stop();
+    playButton->setText("Play");
+    state = State::SOLVER_PAUSING;
+  }
+}
+
+void MainWindow::on_resetButton_clicked()
+{
+  viewRefresh->stop();
+  while (solver) {
+    bool res = solver->wait();
+    if (res) {
+      solver->deleteLater();
+      solver = nullptr;
+    }
+  }
+  buffer.clear();
+  sudoku = startGame;
+  showSudoku(sudoku);
+  state = State::IDLE;
+  playButton->setText("Play");
+}
+
+void MainWindow::on_nextButton_clicked()
+{
+
+  viewRefresh->stop();
+  if (!solver) {
+    startGame = sudoku;
+    solver = new Solver(&buffer, sudoku, this);
+    connect(solver, SIGNAL(finished()), this, SLOT(solverFinished()));
+    solver->start();
+    solverRunning = true;
+  }
+  state = State::SOLVER_PAUSING;
+  playButton->setText("Play");
+  refreshView();
 }
