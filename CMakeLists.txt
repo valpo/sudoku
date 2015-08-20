@@ -11,5 +11,6 @@ endif()
 
 add_subdirectory(classic)
 add_subdirectory(constexpr)
+add_subdirectory(constexpr_arr)
 add_subdirectory(qt)
 
